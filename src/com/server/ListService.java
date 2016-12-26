@@ -1,5 +1,5 @@
 package com.server;
 
-public class Service {
+public class ListService {
 
 }
