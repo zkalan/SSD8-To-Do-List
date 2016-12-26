@@ -38,7 +38,7 @@ public interface ListServiceInterface {
 	//已存在：Project alrearly exists 同名项目已存在，请重试...
 	//成功：Add project success 添加项目成功！
 	@WebMethod
-	public String addProject(String name,String password,String project_title,String start_time,String end_time,String summary);
+	public String addProject(String name,String password,String summary,String start_time,String end_time);
 
 	//查询项目（指定时间段内的项目，列出开始时间、结束时间、标签）
 	//查询结果为空...
@@ -63,9 +63,6 @@ public interface ListServiceInterface {
 	//清除失败！
 	@WebMethod
 	public String clearProject(String name,String password);
-	
-	@WebMethod
-	public String getHello(String name);
 
 
 
