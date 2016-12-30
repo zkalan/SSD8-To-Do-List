@@ -1,12 +1,16 @@
 package com.server;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class operateTable {
 	
-	operateDB connection = null;
+	private operateDB connection = null;
 	
-	String sql = null;
+	private String sql = null;
 	/**
 	 * 初始化对数据库的连接
 	 */
@@ -24,26 +28,48 @@ public class operateTable {
 	 * @return
 	 */
 	public boolean addUser(String name,String password){
-		return false;
+		//构造插入的sql语句
+		this.sql = "insert into user(user_name,user_passwd) "
+				+ "values ('" + name + "','" + password + "');";
+		//验证操作结果
+		if (this.connection.updateSQL(this.sql) == 1) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	/**
 	 * 判断指定名字的用户是否存在
 	 * @param name
 	 * @return
+	 * @throws SQLException 
 	 */
-	public boolean isUserExist(String name){
+	public boolean isUserExist(String name) throws SQLException{
 		
-		return false;
+		if (false == this.getResultSetWithSignalCondition("user", "user_name", name).next()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	/**
 	 * 根据用户的名字获得它的id
 	 * 需要经过isUserExist判断
 	 * @param name
 	 * @return
+	 * @throws SQLException 
 	 */
-	public ResultSet getUserIDByName(String name){
+	public String getUserIDByName(String name) throws SQLException{
 		
-		return null;
+		ResultSet res = this.getResultSetWithSignalCondition("user", "user_name", name);
+		
+		String id = null;
+		
+		while (res.next()) {
+			id = res.getString(1);
+		}
+		
+		return id;
 	}
 	/**
 	 * 根据用户id和密码判断登录是否成功
@@ -51,9 +77,19 @@ public class operateTable {
 	 * @param id
 	 * @param password
 	 * @return
+	 * @throws SQLException 
 	 */
-	public boolean login(String id,String password){
+	public boolean login(String id,String password) throws SQLException{
 		
+		ResultSet res = this.getResultSetWithSignalCondition("user", "user_id", id);
+		
+		while (res.next()) {
+			if (res.getString(3).equals(password)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 		return false;
 	}
 	/**
@@ -64,18 +100,26 @@ public class operateTable {
 	 */
 	public ResultSet getProjectSetByUserID(String id){
 		
-		return null;
+		return this.getResultSetWithSignalCondition("project", "project_user_id", id);
 	}
 	/**
 	 * 判断在project表内
 	 * id名下
-	 * 是否存在名为summary的project
+	 * 是否存在名为title的project
 	 * @param id
 	 * @param summary
 	 * @return
+	 * @throws SQLException 
 	 */
-	public boolean isProjectExistWithSameName(String id,String summary){
+	public boolean isProjectExistWithSameName(String id,String title) throws SQLException{
 		
+		ResultSet res = this.getProjectSetByUserID(id);
+		
+		while (res.next()) {
+			if (title.equals(res.getString(3))) {
+				return true;
+			}
+		}
 		return false;
 	}
 	/**
@@ -86,9 +130,16 @@ public class operateTable {
 	 * @param end_time
 	 * @return
 	 */
-	public boolean addProject(String summary,String start_time,String end_time){
+	public boolean addProject(String id,String title,String start_time,String end_time,String summary){
 		
-		return false;
+		this.sql = "insert into project (project_user_id,project_title,project_start_time,project_end_time,project_summary) "
+				+ "values ('" + id + "','" + title + "','" + start_time + "','" + end_time + "','" + summary + "');";
+		
+		if (1 == this.connection.updateSQL(this.sql)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	/**
 	 * 根据时间 
@@ -96,19 +147,33 @@ public class operateTable {
 	 * @param left_time
 	 * @param right_time
 	 * @return
+	 * @throws SQLException 
+	 * @throws ParseException 
 	 */
-	public ResultSet searchProjectByTime(String id,String left_time,String right_time){
+	public ResultSet searchProjectByTime(String id,String left_time,String right_time) throws ParseException, SQLException{
 		
-		return null;
+		ResultSet res = this.getProjectSetByUserID(id);
+		
+		while (res.next()) {
+			if (!this.inTimeRange(left_time, res.getString(4), res.getString(5), right_time)) {
+				res.deleteRow();
+			}
+		}
+		return res;
 	}
 	/**
 	 * 指定id的project是否存在
 	 * @param id
 	 * @return
+	 * @throws SQLException 
 	 */
-	public boolean isProjectExistWithID(String id){
+	public boolean isProjectExistWithID(String id) throws SQLException{
 		
-		return false;
+		if (false == this.getResultSetWithSignalCondition("project", "project_id", id).next()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	/**
 	 * 删除指定id的project
@@ -118,7 +183,13 @@ public class operateTable {
 	 */
 	public boolean deleteProjectByID(String id){
 		
-		return false;
+		this.sql = "delete project from project where project_id='" + id + "';";
+		
+		if (1 == this.connection.updateSQL(this.sql)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	/**
 	 * 清除指定用户id下的
@@ -126,7 +197,15 @@ public class operateTable {
 	 * @param id
 	 * @return
 	 */
-	public void clearAllProject(String id){
+	public boolean clearAllProject(String id){
+		
+		this.sql = "delete project from project where project_user_id='" + id + "';";
+		
+		if (1 == this.connection.updateSQL(this.sql)) {
+			return true;
+		} else {
+			return false;
+		}
 		
 	}
 	/**
@@ -140,7 +219,11 @@ public class operateTable {
 	 */
 	public ResultSet getResultSetWithSignalCondition(String table_name,String column,String condition){
 		
-		return null;
+		this.sql = "select * from " + table_name + " where " + column + "='" + condition + "';";
+		
+		ResultSet res = this.connection.executeSQL(this.sql);
+		
+		return res;
 	}
 	
 	/**
@@ -149,6 +232,35 @@ public class operateTable {
 	public void close(){
 		if (connection != null){
 			this.connection.closeConnecetion();
+		}
+	}
+	
+	/**
+	 * 指定的时间是否位于指定的时间段内
+	 * @param left_time
+	 * @param start_time
+	 * @param end_time
+	 * @param right_time
+	 * @return
+	 * @throws java.text.ParseException
+	 */
+	public boolean inTimeRange(String left_time,String start_time,String end_time,String right_time) throws java.text.ParseException{
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
+		//
+		Date left = null , right = null;
+		//
+		Date start = null , end = null;
+		
+		left = sdf.parse(left_time);
+		start = sdf.parse(start_time);
+		end = sdf.parse(end_time);
+		right = sdf.parse(right_time);
+		
+		if (left.getTime() <= start.getTime() && right.getTime() >= end.getTime()) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
