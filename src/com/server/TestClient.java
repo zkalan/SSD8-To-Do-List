@@ -34,7 +34,7 @@ public class TestClient {
 		
 //		System.out.println(listservice.deleteProjectByID("root", "root", "4"));
 		
-//		System.out.println(listservice.clearProject("root", "root"));
+		System.out.println(listservice.clearProject("root", "root"));
 		
 		System.out.println(listservice.showProject("root", "root"));
 		
