@@ -99,6 +99,10 @@ public class ListService implements ListServiceInterface{
 			if (false == projectSet.next()) {
 				return "There are currently no projects in your list.\n";
 			} else {
+				
+				//移动游标到第一行之前
+				projectSet.beforeFirst();
+				
 				while (projectSet.next()) {
 					res.append(projectSet.getString(1) + "/");
 					res.append(projectSet.getString(3) + "/");
