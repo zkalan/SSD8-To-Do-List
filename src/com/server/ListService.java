@@ -244,9 +244,9 @@ public class ListService implements ListServiceInterface{
 	public boolean inTimeRange(String left_time,String start_time,String end_time,String right_time) throws java.text.ParseException{
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		//
+		//时间范围的左边界和右边界
 		Date left = null , right = null;
-		//
+		//用来接收从结果集中提取的项目开始时间和结束时间
 		Date start = null , end = null;
 		
 		left = sdf.parse(left_time);
