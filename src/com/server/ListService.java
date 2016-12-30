@@ -1,7 +1,6 @@
 package com.server;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -36,7 +35,7 @@ public class ListService implements ListServiceInterface{
 	 * @throws SQLException 
 	 */
 	@WebMethod
-	public String register(String name, String password) throws SQLException{
+	public String register(String name, String password) throws Exception{
 		if (!operatetable.isUserExist(name)){
 			
 			StringBuilder res = new StringBuilder();
@@ -68,7 +67,7 @@ public class ListService implements ListServiceInterface{
 	 * @throws SQLException 
 	 */
 	@WebMethod
-	public boolean login(String name, String password) throws SQLException {
+	public boolean login(String name, String password) throws Exception {
 		
 		if (operatetable.isUserExist(name)) {
 			//用户名存在，可以进行登录验证
@@ -91,7 +90,7 @@ public class ListService implements ListServiceInterface{
 	 * @param password
 	 */
 	@WebMethod
-	public String showProject(String name, String password) throws SQLException {
+	public String showProject(String name, String password) throws Exception {
 		
 		StringBuilder res = new StringBuilder();
 		
@@ -133,7 +132,7 @@ public class ListService implements ListServiceInterface{
 	 * @throws SQLException 
 	 */
 	@WebMethod
-	public String addProject(String name, String password, String title, String start_time, String end_time,String summary) throws SQLException {
+	public String addProject(String name, String password, String title, String start_time, String end_time,String summary) throws Exception {
 		
 		StringBuilder res = new StringBuilder();
 		
@@ -161,7 +160,7 @@ public class ListService implements ListServiceInterface{
 	 * return boolean
 	 */
 	@WebMethod
-	public String searchProjectByTime(String name, String password, String left_time, String right_time) throws SQLException, java.text.ParseException {
+	public String searchProjectByTime(String name, String password, String left_time, String right_time) throws Exception, java.text.ParseException {
 		
 		StringBuilder res = new StringBuilder();
 		
@@ -204,7 +203,7 @@ public class ListService implements ListServiceInterface{
 	 * @throws SQLException 
 	 */
 	@WebMethod
-	public String deleteProjectByID(String name, String password, String project_id) throws SQLException {
+	public String deleteProjectByID(String name, String password, String project_id) throws Exception {
 		
 		if (this.login(name,password)){
 			if (operatetable.deleteProjectByID(project_id)) {
@@ -226,7 +225,7 @@ public class ListService implements ListServiceInterface{
 	 * @throws SQLException 
 	 */
 	@WebMethod
-	public String clearProject(String name, String password) throws SQLException {
+	public String clearProject(String name, String password) throws Exception {
 		
 		if (this.login(name,password)){
 			if (operatetable.clearAllProject(operatetable.getUserIDByName(name))) {

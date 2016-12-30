@@ -1,11 +1,10 @@
 package com.server;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 
 public class TestClient {
 
-	public static void main(String[] args) throws SQLException, ParseException {
+	public static void main(String[] args) throws Exception, ParseException {
 		//初始化对象
 		ListService listservice = new ListService();
 		
