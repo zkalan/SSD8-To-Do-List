@@ -79,7 +79,7 @@ public class operateTable {
 	 * @return
 	 * @throws SQLException 
 	 */
-	public boolean login(String id,String password) throws SQLException{
+	public boolean verifyNameAndPassword(String id,String password) throws SQLException{
 		
 		ResultSet res = this.getResultSetWithSignalCondition("user", "user_id", id);
 		
