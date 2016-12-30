@@ -13,6 +13,7 @@ public class ListServer {
 		
 		Endpoint.publish("http://127.0.0.1:80/todolist/listservice", new ListService());
 		System.out.println("Service success!");
+		
 	}
 
 }
